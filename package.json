@@ -1,0 +1,46 @@
+{
+  "name": "graphql-fragment-to-json",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "repository": "git@github.com:commit42/graphql-fragment-to-json.git",
+  "author": "commit42",
+  "private": false,
+  "licence": "MIT",
+  "scripts": {
+    "commit": "git-cz",
+    "c42": "jake --",
+    "dev": "node src/index.js",
+    "dist": "node dist/index.js",
+    "build": "NODE_ENV=production webpack --color",
+    "test": "jest",
+    "lint": "eslint --max-warnings=0 ."
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.8.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/register": "^7.8.3",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-root-import": "^6.4.1",
+    "babel-plugin-syntax-async-functions": "^6.13.0",
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "^3.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "jake": "^10.4.3",
+    "jake-synchronoustasks": "^1.0.0",
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  }
+}
