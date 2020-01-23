@@ -1,49 +1,26 @@
 const path = require("path");
-const webpack = require("webpack");
-const fs = require("fs-extra");
-
-const buildDir = path.join(__dirname, "dist");
-const buildFilename = "index.js";
-
 const PRODUCTION = process.env.NODE_ENV === "production";
 
 module.exports = {
-  target: "node",
-
-  entry: "./src/index.js",
-
+  entry: path.resolve(__dirname, "src/index.js"),
   output: {
-    path: buildDir,
-    filename: buildFilename
+    path: path.resolve(__dirname, "dist"),
+    filename: "index.js",
+    libraryTarget: "umd",
+    globalObject: "this"
   },
-
-  context: __dirname,
-  node: {
-    __filename: false,
-    __dirname: false
-  },
-
-  resolve: {
-    extensions: [".js"]
-  },
-
-  mode: PRODUCTION ? "production" : "development",
-
-  plugins: [
-    new webpack.DefinePlugin({
-      __DIST: JSON.stringify(PRODUCTION)
-    })
-  ],
-
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
-        use: {
-          loader: "babel-loader"
-        }
+        test: /\.(js)$/,
+        exclude: /node_modules/,
+        use: ["babel-loader"]
       }
     ]
-  }
+  },
+  resolve: {
+    extensions: [".js"],
+    modules: [path.resolve("./node_modules"), path.resolve(__dirname, "src")]
+  },
+  mode: PRODUCTION ? "production" : "development"
 };
