@@ -29,26 +29,74 @@ const convertSelectionsToObject = ({
     const selections = getFragmentSelections(selection);
     const hasSubSelections = !!selections;
 
-    if (hasSubSelections) {
-      const isSubFragment = selections?.[0]?.kind === "FragmentSpread";
-
-      if (isSubFragment) {
-        const fragmentName = selections[0].name.value;
-      } else {
-        const currentNamespace = completeFieldName;
-        const subSelections = selection.selectionSet.selections;
-        finalObject = convertSelectionsToObject({
-          selections: subSelections,
-          defaultValue,
-          finalObject,
-          namespace: currentNamespace
-        });
-      }
+    if (!hasSubSelections) {
+      return;
     }
+
+    const isSubFragment = selections?.[0]?.kind === "FragmentSpread";
+
+    if (isSubFragment) {
+      _set(
+        finalObject,
+        completeFieldName,
+        convertSubFragment({
+          selections,
+          definitions,
+          defaultValue
+        })
+      );
+      return;
+    }
+
+    finalObject = addSubSelection({
+      namespace: completeFieldName,
+      selection,
+      defaultValue,
+      finalObject,
+      definitions
+    });
   });
 
   return finalObject;
 };
+
+const convertSubFragment = ({ selections, definitions, defaultValue }) => {
+  const subFragmentName = selections[0].name.value;
+  const subSelections = getFragmentSelectionsByFragmentName(
+    subFragmentName,
+    definitions
+  );
+
+  if (!subSelections) {
+    return;
+  }
+
+  return convertSelectionsToObject({
+    selections: subSelections,
+    definitions,
+    defaultValue
+  });
+};
+
+const addSubSelection = ({
+  namespace,
+  selection,
+  defaultValue,
+  finalObject,
+  definitions
+}) => {
+  const subSelections = selection.selectionSet.selections;
+  return convertSelectionsToObject({
+    selections: subSelections,
+    defaultValue,
+    finalObject,
+    namespace,
+    definitions
+  });
+};
+
+const getFragmentSelectionsByFragmentName = (name, definitions) =>
+  getFragmentSelections(getFragmentByName(name, definitions));
 
 const getFragmentByName = (name, definitions) =>
   definitions.find(definition => definition?.name?.value === name);
@@ -64,13 +112,10 @@ export default ({
     return null;
   }
 
-  const fragment = getFragmentByName(fragmentName, definitions);
-
-  if (!isFragment(fragment)) {
-    return null;
-  }
-
-  const selections = getFragmentSelections(fragment);
+  const selections = getFragmentSelectionsByFragmentName(
+    fragmentName,
+    definitions
+  );
 
   if (!selections) {
     return null;
