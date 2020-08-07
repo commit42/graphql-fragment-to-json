@@ -3,12 +3,13 @@ import isFragment from "./isFragment";
 
 const DEFAULT_VALUE = undefined;
 
-const convertSelectionsToObject = (
+const convertSelectionsToObject = ({
   selections,
+  definitions,
   defaultValue,
   finalObject = {},
   namespace = ""
-) => {
+}) => {
   if (!Array.isArray(selections)) {
     return finalObject;
   }
@@ -26,24 +27,43 @@ const convertSelectionsToObject = (
 
     _set(finalObject, completeFieldName, defaultValue);
 
-    const hasSubSelections = !!selection?.selectionSet?.selections;
+    const selections = selection?.selectionSet?.selections;
+    const hasSubSelections = !!selections;
 
     if (hasSubSelections) {
-      const currentNamespace = completeFieldName;
-      const subSelections = selection.selectionSet.selections;
-      finalObject = convertSelectionsToObject(
-        subSelections,
-        defaultValue,
-        finalObject,
-        currentNamespace
-      );
+      const isSubFragment = selections?.[0]?.kind === "FragmentSpread";
+
+      if (isSubFragment) {
+        const fragmentName = selections[0].name.value;
+      } else {
+        const currentNamespace = completeFieldName;
+        const subSelections = selection.selectionSet.selections;
+        finalObject = convertSelectionsToObject({
+          selections: subSelections,
+          defaultValue,
+          finalObject,
+          namespace: currentNamespace
+        });
+      }
     }
   });
 
   return finalObject;
 };
 
-export default (fragment, defaultValue = DEFAULT_VALUE) => {
+export default ({
+  fragmentName,
+  definitions,
+  defaultValue = DEFAULT_VALUE
+}) => {
+  if (!Array.isArray(definitions)) {
+    return null;
+  }
+
+  const fragment = definitions.find(
+    definition => definition?.name?.value === fragmentName
+  );
+
   if (!isFragment(fragment)) {
     return null;
   }
@@ -54,5 +74,5 @@ export default (fragment, defaultValue = DEFAULT_VALUE) => {
     return null;
   }
 
-  return convertSelectionsToObject(selections, defaultValue);
+  return convertSelectionsToObject({ selections, defaultValue, definitions });
 };

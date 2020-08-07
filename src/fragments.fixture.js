@@ -149,6 +149,56 @@ export default {
           }
         ]
       }
+    },
+    {
+      kind: "FragmentDefinition",
+      name: {
+        kind: "Name",
+        value: "WithSubFragment"
+      },
+      typeCondition: {
+        kind: "NamedType",
+        name: {
+          kind: "Name",
+          value: "Office"
+        }
+      },
+      directives: [],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: {
+              kind: "Name",
+              value: "name"
+            },
+            arguments: [],
+            directives: []
+          },
+          {
+            kind: "Field",
+            name: {
+              kind: "Name",
+              value: "sub"
+            },
+            arguments: [],
+            directives: [],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: {
+                    kind: "Name",
+                    value: "Simple"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
     }
   ],
   loc: {
