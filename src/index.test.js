@@ -69,4 +69,35 @@ describe("graphqlFragmentToJson", () => {
       }
     });
   });
+
+  test("convert complex fragment with sub fragment", () => {
+    expect(
+      graphqlFragmentToJson({
+        fragmentName: "ComplexWithSubFragment",
+        definitions: fragments.definitions,
+        defaultValue: ""
+      })
+    ).toEqual({
+      name: "",
+      subSelection: {
+        subField1: "",
+        subField2: {
+          subField1lvl2: "",
+          subField2lvl2: {
+            name: "",
+            addressInformation: {
+              address: "",
+              phone: "",
+              email: "",
+              postal_code: {
+                id: "",
+                postal_code: "",
+                city: ""
+              }
+            }
+          }
+        }
+      }
+    });
+  });
 });
