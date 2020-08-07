@@ -1,6 +1,6 @@
 {
   "name": "graphql-fragment-to-json",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "main": "dist/index.js",
   "repository": "git@github.com:commit42/graphql-fragment-to-json.git",
   "author": "commit42",

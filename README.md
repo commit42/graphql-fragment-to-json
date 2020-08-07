@@ -34,8 +34,10 @@ const UserFragment = gql`
   }
 `;
 
-const myFragment = UserFragment.definitions[0];
-console.log(graphqlFragmentToJson(myFragment));
+console.log(graphqlFragmentToJson({
+  fragmentName: "UserFragment",
+  definitions: UserFragment.definitions
+}));
 /* output
   username: undefined
   first_name: undefined
@@ -49,7 +51,11 @@ console.log(graphqlFragmentToJson(myFragment));
 */
 
 // You can choose a default value other than undefined like this
-console.log(graphqlFragmentToJson(myFragment, ""));
+console.log(graphqlFragmentToJson({
+  fragmentName: "UserFragment",
+  definitions: UserFragment.definitions,
+  defaultValue: ""
+}));
 /* output
   username: ""
   first_name: ""
