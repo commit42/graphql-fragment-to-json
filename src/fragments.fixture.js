@@ -149,6 +149,152 @@ export default {
           }
         ]
       }
+    },
+    {
+      kind: "FragmentDefinition",
+      name: {
+        kind: "Name",
+        value: "WithSubFragment"
+      },
+      typeCondition: {
+        kind: "NamedType",
+        name: {
+          kind: "Name",
+          value: "Office"
+        }
+      },
+      directives: [],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: {
+              kind: "Name",
+              value: "name"
+            },
+            arguments: [],
+            directives: []
+          },
+          {
+            kind: "Field",
+            name: {
+              kind: "Name",
+              value: "sub"
+            },
+            arguments: [],
+            directives: [],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "FragmentSpread",
+                  name: {
+                    kind: "Name",
+                    value: "Simple"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      kind: "FragmentDefinition",
+      name: {
+        kind: "Name",
+        value: "ComplexWithSubFragment"
+      },
+      typeCondition: {
+        kind: "NamedType",
+        name: {
+          kind: "Name",
+          value: "Office"
+        }
+      },
+      directives: [],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: {
+              kind: "Name",
+              value: "name"
+            },
+            arguments: [],
+            directives: []
+          },
+          {
+            kind: "Field",
+            name: {
+              kind: "Name",
+              value: "subSelection"
+            },
+            arguments: [],
+            directives: [],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: {
+                    kind: "Name",
+                    value: "subField1"
+                  },
+                  arguments: [],
+                  directives: []
+                },
+                {
+                  kind: "Field",
+                  name: {
+                    kind: "Name",
+                    value: "subField2"
+                  },
+                  arguments: [],
+                  directives: [],
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: {
+                          kind: "Name",
+                          value: "subField1lvl2"
+                        },
+                        arguments: [],
+                        directives: []
+                      },
+                      {
+                        kind: "Field",
+                        name: {
+                          kind: "Name",
+                          value: "subField2lvl2"
+                        },
+                        arguments: [],
+                        directives: [],
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "FragmentSpread",
+                              name: {
+                                kind: "Name",
+                                value: "Complex"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
     }
   ],
   loc: {

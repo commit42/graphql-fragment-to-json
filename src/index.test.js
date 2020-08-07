@@ -7,8 +7,12 @@ describe("graphqlFragmentToJson", () => {
   });
 
   test("convert simple fragment", () => {
-    const simpleFragment = fragments.definitions[0];
-    expect(graphqlFragmentToJson(simpleFragment)).toEqual({
+    expect(
+      graphqlFragmentToJson({
+        fragmentName: "Simple",
+        definitions: fragments.definitions
+      })
+    ).toEqual({
       name: undefined,
       area_map: undefined
     });
@@ -16,24 +20,82 @@ describe("graphqlFragmentToJson", () => {
 
   test("convert simple fragment with personnal default value", () => {
     const simpleFragment = fragments.definitions[0];
-    expect(graphqlFragmentToJson(simpleFragment, "")).toEqual({
+    expect(
+      graphqlFragmentToJson({
+        fragmentName: "Simple",
+        definitions: fragments.definitions,
+        defaultValue: ""
+      })
+    ).toEqual({
       name: "",
       area_map: ""
     });
   });
 
   test("convert complex fragment with recursion", () => {
-    const complexFragment = fragments.definitions[1];
-    expect(graphqlFragmentToJson(complexFragment)).toEqual({
-      name: undefined,
+    expect(
+      graphqlFragmentToJson({
+        fragmentName: "Complex",
+        definitions: fragments.definitions,
+        defaultValue: ""
+      })
+    ).toEqual({
+      name: "",
       addressInformation: {
-        address: undefined,
-        phone: undefined,
-        email: undefined,
+        address: "",
+        phone: "",
+        email: "",
         postal_code: {
-          id: undefined,
-          postal_code: undefined,
-          city: undefined
+          id: "",
+          postal_code: "",
+          city: ""
+        }
+      }
+    });
+  });
+
+  test("convert fragment with sub fragment", () => {
+    expect(
+      graphqlFragmentToJson({
+        fragmentName: "WithSubFragment",
+        definitions: fragments.definitions,
+        defaultValue: ""
+      })
+    ).toEqual({
+      name: "",
+      sub: {
+        name: "",
+        area_map: ""
+      }
+    });
+  });
+
+  test("convert complex fragment with sub fragment", () => {
+    expect(
+      graphqlFragmentToJson({
+        fragmentName: "ComplexWithSubFragment",
+        definitions: fragments.definitions,
+        defaultValue: ""
+      })
+    ).toEqual({
+      name: "",
+      subSelection: {
+        subField1: "",
+        subField2: {
+          subField1lvl2: "",
+          subField2lvl2: {
+            name: "",
+            addressInformation: {
+              address: "",
+              phone: "",
+              email: "",
+              postal_code: {
+                id: "",
+                postal_code: "",
+                city: ""
+              }
+            }
+          }
         }
       }
     });

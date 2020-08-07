@@ -3,12 +3,13 @@ import isFragment from "./isFragment";
 
 const DEFAULT_VALUE = undefined;
 
-const convertSelectionsToObject = (
+const convertSelectionsToObject = ({
   selections,
+  definitions,
   defaultValue,
   finalObject = {},
   namespace = ""
-) => {
+}) => {
   if (!Array.isArray(selections)) {
     return finalObject;
   }
@@ -25,34 +26,100 @@ const convertSelectionsToObject = (
       : fieldName;
 
     _set(finalObject, completeFieldName, defaultValue);
+    const selections = getFragmentSelections(selection);
+    const hasSubSelections = !!selections;
 
-    const hasSubSelections = !!selection?.selectionSet?.selections;
-
-    if (hasSubSelections) {
-      const currentNamespace = completeFieldName;
-      const subSelections = selection.selectionSet.selections;
-      finalObject = convertSelectionsToObject(
-        subSelections,
-        defaultValue,
-        finalObject,
-        currentNamespace
-      );
+    if (!hasSubSelections) {
+      return;
     }
+
+    const isSubFragment = selections?.[0]?.kind === "FragmentSpread";
+
+    if (isSubFragment) {
+      _set(
+        finalObject,
+        completeFieldName,
+        convertSubFragment({
+          selections,
+          definitions,
+          defaultValue
+        })
+      );
+      return;
+    }
+
+    finalObject = addSubSelection({
+      namespace: completeFieldName,
+      selection,
+      defaultValue,
+      finalObject,
+      definitions
+    });
   });
 
   return finalObject;
 };
 
-export default (fragment, defaultValue = DEFAULT_VALUE) => {
-  if (!isFragment(fragment)) {
+const convertSubFragment = ({ selections, definitions, defaultValue }) => {
+  const subFragmentName = selections[0].name.value;
+  const subSelections = getFragmentSelectionsByFragmentName(
+    subFragmentName,
+    definitions
+  );
+
+  if (!subSelections) {
+    return;
+  }
+
+  return convertSelectionsToObject({
+    selections: subSelections,
+    definitions,
+    defaultValue
+  });
+};
+
+const addSubSelection = ({
+  namespace,
+  selection,
+  defaultValue,
+  finalObject,
+  definitions
+}) => {
+  const subSelections = selection.selectionSet.selections;
+  return convertSelectionsToObject({
+    selections: subSelections,
+    defaultValue,
+    finalObject,
+    namespace,
+    definitions
+  });
+};
+
+const getFragmentSelectionsByFragmentName = (name, definitions) =>
+  getFragmentSelections(getFragmentByName(name, definitions));
+
+const getFragmentByName = (name, definitions) =>
+  definitions.find(definition => definition?.name?.value === name);
+
+const getFragmentSelections = fragment => fragment?.selectionSet?.selections;
+
+export default ({
+  fragmentName,
+  definitions,
+  defaultValue = DEFAULT_VALUE
+}) => {
+  if (!Array.isArray(definitions)) {
     return null;
   }
 
-  const selections = fragment?.selectionSet?.selections;
+  const selections = getFragmentSelectionsByFragmentName(
+    fragmentName,
+    definitions
+  );
 
   if (!selections) {
     return null;
   }
 
-  return convertSelectionsToObject(selections, defaultValue);
+  return convertSelectionsToObject({ selections, defaultValue, definitions });
 };
