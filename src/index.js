@@ -26,8 +26,7 @@ const convertSelectionsToObject = ({
       : fieldName;
 
     _set(finalObject, completeFieldName, defaultValue);
-
-    const selections = selection?.selectionSet?.selections;
+    const selections = getFragmentSelections(selection);
     const hasSubSelections = !!selections;
 
     if (hasSubSelections) {
@@ -51,6 +50,11 @@ const convertSelectionsToObject = ({
   return finalObject;
 };
 
+const getFragmentByName = (name, definitions) =>
+  definitions.find(definition => definition?.name?.value === name);
+
+const getFragmentSelections = fragment => fragment?.selectionSet?.selections;
+
 export default ({
   fragmentName,
   definitions,
@@ -60,15 +64,13 @@ export default ({
     return null;
   }
 
-  const fragment = definitions.find(
-    definition => definition?.name?.value === fragmentName
-  );
+  const fragment = getFragmentByName(fragmentName, definitions);
 
   if (!isFragment(fragment)) {
     return null;
   }
 
-  const selections = fragment?.selectionSet?.selections;
+  const selections = getFragmentSelections(fragment);
 
   if (!selections) {
     return null;
